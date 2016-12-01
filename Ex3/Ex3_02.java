@@ -27,16 +27,21 @@ public class Ex3_02 {
         Text ip = new Text();
         Text time = new Text();
         Set<String> set = new HashSet<String>();
+
         @Override
-        protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+        protected void setup(Context context) throws IOException, InterruptedException {
             Configuration conf = context.getConfiguration();
             FileSystem fs = FileSystem.get(conf);
-            Path customIPsPath = new Path(conf.get("ip_1"));
+            Path customIPsPath = new Path(conf.get("custom_ips_hdfs_path"));
             InputStream is = fs.open(customIPsPath);
             Scanner scanner = new Scanner(is);
             while(scanner.hasNext()){
                 set.add(scanner.nextLine());
             }
+        }
+
+        @Override
+        protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             String[] line = value.toString().split("\\t");
             if(set.contains(line[0])){
                 ip.set(line[0]);
